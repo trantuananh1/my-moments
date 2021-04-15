@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TemplateConfig>
+    <!--        Object-->
+    <Config data="Profile" template="object/Profile.ftl"/>
+    <Config data="UserLite" template="object/UserLite.ftl"/>
+    <Config data="User" template="object/User.ftl"/>
+    <Config data="Comment" template="object/Comment.ftl"/>
+    <Config data="Hashtag" template="object/Hashtag.ftl"/>
+    <Config data="Tag" template="object/Tag.ftl"/>
+    <Config data="Post" template="object/Post.ftl"/>
+    <Config data="Reaction" template="object/Reaction.ftl"/>
+    <Config data="Login" template="object/Login.ftl"/>
+
+    <!--        Assoc-->
+    <Config data="HasPost" template="assoc/AssocBase.ftl"/>
+    <Config data="HasComment" template="assoc/AssocBase.ftl"/>
+    <Config data="HasTag" template="assoc/AssocBase.ftl"/>
+    <Config data="HasHashtag" template="assoc/AssocBase.ftl"/>
+    <Config data="HasReaction" template="assoc/AssocBase.ftl"/>
+</TemplateConfig>
