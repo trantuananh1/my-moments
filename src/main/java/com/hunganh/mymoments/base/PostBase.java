@@ -25,7 +25,6 @@ import java.util.*;
 @AllArgsConstructor
 @Component
 public class PostBase {
-    private final RelationBaseRepository relationBaseRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final AttachmentBase attachmentBase;

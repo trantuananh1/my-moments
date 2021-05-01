@@ -28,11 +28,6 @@ import java.util.List;
 @AllArgsConstructor
 public class RelationBaseRepository {
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
-
-    public void addRelation(Object o1, SnwRelationType snwRelationType, Object o2){
-
-    }
 
     public boolean hasRelationship(User user1, String relationType, User user2){
         List<String> relationTypes = userRepository.getRelationType(user1.getUsername(), user2.getUsername());
