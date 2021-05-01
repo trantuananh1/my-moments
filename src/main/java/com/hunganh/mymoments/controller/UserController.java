@@ -62,51 +62,65 @@ public class UserController {
 
     @PostMapping("/follow/{toId}")
     public ResponseEntity followUser(@PathVariable("toId") long toId) {
-        try{
+        try {
             userService.followUser(toId);
             return new ResponseEntity(new SnwSuccessResponse(), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_FOLLOW), HttpStatus.OK);
+            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_FOLLOW), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/unfollow/{toId}")
     public ResponseEntity unfollowUser(@PathVariable("toId") long toId) {
-        try{
+        try {
             userService.unfollowUser(toId);
             return new ResponseEntity(new SnwSuccessResponse(), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_UNFOLLOW), HttpStatus.OK);
+            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_UNFOLLOW), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/{userId}/followers")
-    public ResponseEntity getFollowers(@PathVariable("userId") long userId){
-        try{
+    public ResponseEntity getFollowers(@PathVariable("userId") long userId) {
+        try {
             Map<String, Object> result = userService.getFollowers(userId);
-            if (result.size() == 0){
+            if (result.size() == 0) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity(TemplateUtil.generateJson(result), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_GET), HttpStatus.OK);
+            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_GET), HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping("/{userId}/followings")
-    public ResponseEntity getFollowings(@PathVariable("userId") long userId){
-        try{
+    public ResponseEntity getFollowings(@PathVariable("userId") long userId) {
+        try {
             Map<String, Object> result = userService.getFollowings(userId);
-            if (result.size() == 0){
+            if (result.size() == 0) {
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity(TemplateUtil.generateJson(result), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_GET), HttpStatus.OK);
+            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_GET), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PutMapping("/password/change")
+    public ResponseEntity changePassword(@RequestBody String data){
+        try {
+            boolean result = userService.changePassword(data);
+            if (result){
+                return new ResponseEntity(new SnwSuccessResponse(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_CHANGE_PASSWORD), HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -15,6 +15,7 @@ import jdk.internal.util.xml.impl.Input;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class UserService {
     private final RelationBaseRepository relationBaseRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Map<String, Object> getUser(long userId, String type) {
@@ -137,5 +139,18 @@ public class UserService {
         }
         result.put(SnwObjectType.USER.getName(), followings);
         return result;
+    }
+
+    public boolean changePassword(String data){
+        User user = authService.getCurrentUser();
+        JSONObject jsonData = new JSONObject(data);
+        String oldPassword = jsonData.getString(JsonConstant.OLD_PASSWORD);
+        if (passwordEncoder.matches(oldPassword, user.getSaltedPassword())){
+            String newPassword = jsonData.getString(JsonConstant.NEW_PASSWORD);
+            user.setSaltedPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return true;
+        }
+        return true;
     }
 }

@@ -52,6 +52,8 @@ public class UserBase {
         userRepository.save(user);
     }
 
+
+
     public void addExtendData(String offlineId, Object object, String data, long userId) {
 
     }

@@ -1,11 +1,12 @@
 package com.hunganh.mymoments.service;
 
+import com.hunganh.mymoments.base.CommentBase;
 import com.hunganh.mymoments.base.PostBase;
 import com.hunganh.mymoments.base.SnwRelationType;
 import com.hunganh.mymoments.base.UserBase;
 import com.hunganh.mymoments.constant.InputParam;
-import com.hunganh.mymoments.exception.GeneralException;
 import com.hunganh.mymoments.exception.PostNotFoundException;
+import com.hunganh.mymoments.model.Comment;
 import com.hunganh.mymoments.model.Post;
 import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.repository.PostRepository;
@@ -18,50 +19,52 @@ import java.util.Map;
 
 /**
  * @Author: Tran Tuan Anh
- * @Created: Mon, 12/04/2021 3:48 PM
+ * @Created: Sat, 01/05/2021 4:39 PM
  **/
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class PostService {
+public class CommentService {
+    private final CommentBase commentBase;
     private final PostBase postBase;
-    private final UserBase userBase;
     private final AuthService authService;
     private final PostRepository postRepository;
 
-    public Map<String, Object> addPost(long parentId, String data) {
+    public Map<String, Object> addComment(long parentId, String data) {
         Map<String, Object> result = new HashMap<>();
         User user = authService.getCurrentUser();
-        Map<String, Object> postMap = postBase.getInsertData(data, parentId);
-        String offlineId = postMap.keySet().iterator().next();
-        Post post = (Post) postMap.get(offlineId);
-        if (post == null) {
+        Post post = postRepository.findById(parentId)
+                .orElseThrow(() -> new PostNotFoundException(String.valueOf(parentId)));
+        long userId = user.getId();
+        Map<String, Object> commentMap = commentBase.getInsertData(data, parentId);
+        String offlineId = commentMap.keySet().iterator().next();
+        Comment comment = (Comment) commentMap.get(offlineId);
+        if (comment == null) {
             return result;
         }
         //object
-        postBase.createObject(post);
+        commentBase.createObject(comment);
         //assoc
-        userBase.addAssoc(user, SnwRelationType.HAS_POST, post);
+        postBase.addAssoc(post, SnwRelationType.HAS_COMMENT, comment);
         //extend data
-        postBase.addExtendData(post, offlineId, data);
+        commentBase.addExtendData(comment, offlineId, data);
 
         result.put(InputParam.OFFLINE_ID, offlineId);
-        result.put(InputParam.ID, post.getId());
+        result.put(InputParam.ID, comment.getId());
         return result;
     }
 
-    public boolean updatePost(long postId, String data){
-        User user = authService.getCurrentUser();
-        Map<String, Object> postMap = postBase.getUpdateData(data, postId);
-        Post post = (Post) postMap.get(String.valueOf(postId));
-        if (post == null) {
+    public boolean updateComment(long commentId, String data){
+        Map<String, Object> commentMap = commentBase.getUpdateData(data, commentId);
+        Comment comment = (Comment) commentMap.get(String.valueOf(commentId));
+        if (comment == null) {
             return false;
         }
         //object
-        postBase.updateObject(post);
+        commentBase.updateObject(comment);
         //extend data
-        postBase.updateExtendData(post, String.valueOf(postId), data);
+        commentBase.updateExtendData(comment, String.valueOf(commentId), data);
 
         return true;
     }

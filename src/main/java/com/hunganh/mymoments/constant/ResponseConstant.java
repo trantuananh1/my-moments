@@ -31,6 +31,7 @@ public class ResponseConstant {
     public static final String CAN_NOT_CRAWL_DATA = "can not crawl data";
     public static final String CAN_NOT_LOGIN = "can not login";
     public static final String CAN_NOT_LOGOUT = "can not logout";
+    public static final String CAN_NOT_CHANGE_PASSWORD = "can not change password";
 
     public ResponseConstant() {
     }

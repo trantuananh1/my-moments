@@ -54,6 +54,7 @@ public class AttachmentBase {
             String offlineId = itemIds.getString(0);
             JSONObject items = jsonObject.getJSONObject(SnwObjectType.ATTACHMENT.getName());
             JSONObject jsMetadata = items.getJSONObject(offlineId).getJSONObject(InputParam.DATA);
+            long currentTime = new Date().getTime();
             Attachment attachment = Attachment.builder()
                     .name(jsMetadata.getString(AttributeConstant.NAME))
                     .url(jsMetadata.getString(AttributeConstant.URL))
@@ -61,6 +62,9 @@ public class AttachmentBase {
                     .size(jsMetadata.getInt(AttributeConstant.SIZE))
                     .length(jsMetadata.getInt(AttributeConstant.LENGTH))
                     .width(jsMetadata.getInt(AttributeConstant.WIDTH))
+                    .version(1)
+                    .dateCreated(currentTime)
+                    .dateUpdated(currentTime)
                     .build();
             result.put(offlineId, attachment);
         } catch (Exception e) {

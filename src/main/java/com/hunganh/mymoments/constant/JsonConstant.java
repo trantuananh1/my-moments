@@ -22,4 +22,9 @@ public class JsonConstant {
     public static final String ENABLED = "enabled";
     public static final String AVATAR_URL = "avatar_url";
     public static final String COVER_URL = "cover_url";
+
+    public static final String OLD_PASSWORD = "old_password";
+    public static final String NEW_PASSWORD = "new_password";
+
+    public static final String CONTENT = "content";
 }
