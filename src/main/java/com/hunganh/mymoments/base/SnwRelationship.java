@@ -21,19 +21,15 @@ public class SnwRelationship<T> {
     @Id
     @GeneratedValue
     protected Long id;
-    protected final Long time;
+    protected Long time;
     @TargetNode
-    private final T object;
+    protected T object;
 
     public SnwRelationship(T object, Long time) {
         this.object = object;
         this.time = time;
     }
 
-    public SnwRelationship(T object) {
-        this.object = object;
-        this.time = new Date().getTime();
-    }
     public SnwRelationship(){
         this.object = null;
         this.time = 0l;

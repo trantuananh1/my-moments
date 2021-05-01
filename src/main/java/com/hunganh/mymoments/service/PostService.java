@@ -1,6 +1,8 @@
 package com.hunganh.mymoments.service;
 
 import com.hunganh.mymoments.base.PostBase;
+import com.hunganh.mymoments.base.SnwRelationType;
+import com.hunganh.mymoments.base.UserBase;
 import com.hunganh.mymoments.constant.InputParam;
 import com.hunganh.mymoments.model.Post;
 import com.hunganh.mymoments.model.User;
@@ -21,9 +23,13 @@ import java.util.Map;
 @Slf4j
 public class PostService {
     private final PostBase postBase;
+    private final UserBase userBase;
+    private final AuthService authService;
 
-    public Map<String, Object> addPost(String data, User user) {
+    public Map<String, Object> createPost(String data) {
         Map<String, Object> result = new HashMap<>();
+        User user = authService.getCurrentUser();
+        long userId = user.getId();
         Map<String, Object> postMap = postBase.getInsertData(data, user.getId());
         String offlineId = postMap.keySet().iterator().next();
         Post post = (Post) postMap.get(offlineId);
@@ -33,9 +39,9 @@ public class PostService {
         //object
         postBase.addObject(post);
         //assoc
-        postBase.addAssoc(user, post);
+        userBase.addAssoc(user, SnwRelationType.HAS_POST, post);
         //extend data
-        postBase.addExtendData();
+        postBase.addExtendData(post, offlineId, data, userId);
 
         result.put(InputParam.OFFLINE_ID, offlineId);
         result.put(InputParam.ID, post.getId());

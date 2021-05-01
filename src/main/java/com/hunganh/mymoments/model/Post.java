@@ -1,6 +1,7 @@
 package com.hunganh.mymoments.model;
 
 import com.hunganh.mymoments.base.SnwObject;
+import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,9 @@ public class Post extends SnwObject {
     private String caption;
     private Location location;
 
+    @Relationship("HAS_ATTACHMENT")
+    private List<AttachmentOwnership> attachmentOwnerships;
+
     public Post(String caption){
         super(0L, 1, new Date().getTime(), new Date().getTime());
         this.caption  = caption;
@@ -35,5 +39,17 @@ public class Post extends SnwObject {
         super(0L, 1, new Date().getTime(), new Date().getTime());
         this.caption  = caption;
         this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "caption='" + caption + '\'' +
+                ", location=" + location +
+                ", id=" + id +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", dateUpdated=" + dateUpdated +
+                '}';
     }
 }

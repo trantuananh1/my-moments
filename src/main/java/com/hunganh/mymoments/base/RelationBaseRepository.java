@@ -1,11 +1,16 @@
 package com.hunganh.mymoments.base;
 
+import com.hunganh.mymoments.model.Attachment;
 import com.hunganh.mymoments.model.Post;
 import com.hunganh.mymoments.model.User;
+import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
+import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
+import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.omg.PortableServer.POA;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
@@ -23,15 +28,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RelationBaseRepository {
     private final UserRepository userRepository;
-    public void addRelation(Object o1, Object o2){
-        if (o1 instanceof User){
-            User user = (User) o1;
-            if (user.getPostOwnerships()==null){
-                user.setPostOwnerships(new ArrayList<>());
-            }
-            user.getPostOwnerships().add(new PostOwnership((Post) o2, new Date().getTime()));
-            userRepository.save(user);
-        }
+    private final PostRepository postRepository;
+
+    public void addRelation(Object o1, SnwRelationType snwRelationType, Object o2){
+
     }
 
     public boolean hasRelationship(User user1, String relationType, User user2){

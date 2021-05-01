@@ -16,7 +16,8 @@ public enum SnwRelationType {
     HAS_REACTION(8, "HasReaction"),
     HAS_TAG(9, "HasTag"),
     HAS_HASHTAG(10, "HasHashtag"),
-    HAS_VERIFICATION_TOKEN(11, "HasVerificationToken");
+    HAS_VERIFICATION_TOKEN(11, "HasVerificationToken"),
+    HAS_ATTACHMENT(12, "HasAttachment");
 
     private final int value;
     private final String name;

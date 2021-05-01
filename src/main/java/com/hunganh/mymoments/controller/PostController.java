@@ -29,19 +29,20 @@ public class PostController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity addPost(@RequestBody String data) {
-        User user = authService.getCurrentUser();
+    public ResponseEntity createPost(@RequestBody String data) {
         try {
-            Map<String, Object> result = postService.addPost(data, user);
+            Map<String, Object> result = postService.createPost(data);
             if (result != null && result.size() != 0) {
                 String offlineId = (String) result.get(InputParam.OFFLINE_ID);
                 Long id = (Long) result.get(InputParam.ID);
-                return new ResponseEntity(new SnwAddResponse(offlineId, String.valueOf(id)), HttpStatus.CREATED);
+                return new ResponseEntity(new SnwAddResponse(offlineId, String.valueOf(id)), HttpStatus.OK);
+            }else{
+                return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }catch (Exception e){
             log.error(e.getMessage());
+            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_ADD), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_ADD), HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/{postId}")

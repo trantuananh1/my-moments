@@ -2,6 +2,7 @@ package com.hunganh.mymoments.model;
 
 import com.hunganh.mymoments.base.SnwObject;
 import com.hunganh.mymoments.base.SnwRelationType;
+import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.Followship;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
 import lombok.*;
@@ -39,6 +40,8 @@ public class User extends SnwObject {
     private List<Followship> followers;
     @Relationship(type = "FOLLOWS")
     private List<Followship> followings;
+    @Relationship(type = "HAS_ATTACHMENT")
+    private List<AttachmentOwnership> attachmentOwnerships;
 
     public User(String username, String email, String password, boolean isEnabled){
         super(0L, 1, new Date().getTime(), new Date().getTime());

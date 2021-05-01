@@ -23,5 +23,23 @@ public class Attachment extends SnwObject {
     private String name;
     private String mime;
     private int size;
-    private ExtendInfo extendInfo;
+    private int width;
+    private int length;
+
+    @Override
+    public String toString() {
+        return "Attachment{" +
+                "userId=" + userId +
+                ", url='" + url + '\'' +
+                ", name='" + name + '\'' +
+                ", mime='" + mime + '\'' +
+                ", size=" + size +
+                ", width=" + width +
+                ", length=" + length +
+                ", id=" + id +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", dateUpdated=" + dateUpdated +
+                '}';
+    }
 }

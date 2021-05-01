@@ -12,7 +12,8 @@ public enum SnwObjectType {
     TAG(4, "Tag"),
     HASHTAG(5, "Hashtag"),
     REACTION(6, "Reaction"),
-    PROFILE(7, "Profile");
+    PROFILE(7, "Profile"),
+    ATTACHMENT(8, "Attachment");
 
     private final int value;
     private final String name;
