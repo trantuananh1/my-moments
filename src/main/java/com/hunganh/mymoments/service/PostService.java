@@ -1,19 +1,21 @@
 package com.hunganh.mymoments.service;
 
-import com.hunganh.mymoments.base.PostBase;
-import com.hunganh.mymoments.base.SnwRelationType;
-import com.hunganh.mymoments.base.UserBase;
+import com.hunganh.mymoments.base.*;
 import com.hunganh.mymoments.constant.InputParam;
-import com.hunganh.mymoments.exception.GeneralException;
+import com.hunganh.mymoments.dto.SnwMessage;
 import com.hunganh.mymoments.exception.PostNotFoundException;
+import com.hunganh.mymoments.model.Comment;
 import com.hunganh.mymoments.model.Post;
 import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.repository.PostRepository;
+import com.hunganh.mymoments.util.MessagingUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +31,8 @@ public class PostService {
     private final UserBase userBase;
     private final AuthService authService;
     private final PostRepository postRepository;
+    private final MessagingUtil messagingUtil;
+    private final RabbitTemplate template;
 
     public Map<String, Object> addPost(long parentId, String data) {
         Map<String, Object> result = new HashMap<>();
@@ -69,6 +73,14 @@ public class PostService {
     public void deletePost(long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(String.valueOf(postId)));
+        List<Comment> comments = postBase.getComments(post);
         postRepository.delete(post);
+
+        //post event
+        SnwMessage messageEvent = SnwMessage.builder()
+                .comments(comments)
+                .postId(postId)
+                .build();
+        messagingUtil.postEvent(SnwObjectType.POST, SnwActionType.DELETE, messageEvent);
     }
 }

@@ -34,6 +34,7 @@ public class InputParam {
     public static final String ENTRY_ID = "entryId";
     public static final String ENTRY_IDS = "entryIds";
     public static final String COMMENT = "comment";
+    public static final String COMMENTS = "comments";
     public static final String COMMENT_IDS = "commentIds";
     public static final String ATTACHMENT_ID = "attachmentId";
     public static final String ATTACHMENT_IDS = "attachmentIds";

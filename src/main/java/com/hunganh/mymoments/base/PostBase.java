@@ -13,6 +13,7 @@ import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.CommentOwnership;
 import com.hunganh.mymoments.model.relationship.Followship;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
+import com.hunganh.mymoments.repository.CommentRepository;
 import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @Component
 public class PostBase {
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final AttachmentBase attachmentBase;
 
@@ -152,7 +154,20 @@ public class PostBase {
         return result;
     }
 
-    public void addRelationships(Post post) {
+    public List<Comment> getComments(Post post){
+        List<Comment> comments = post.getCommentOwnerships().stream()
+                .map(CommentOwnership::getComment)
+                .collect(Collectors.toList());
+        return comments;
+    }
 
+    public List<Long> getCommentIds(Post post){
+        List<Comment> comments = post.getCommentOwnerships().stream()
+                .map(CommentOwnership::getComment)
+                .collect(Collectors.toList());
+        List<Long> commentIds = comments.stream()
+                .map(Comment::getId)
+                .collect(Collectors.toList());
+        return commentIds;
     }
 }
