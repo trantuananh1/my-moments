@@ -11,7 +11,6 @@ import com.hunganh.mymoments.model.Profile;
 import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.model.relationship.Followship;
 import com.hunganh.mymoments.repository.UserRepository;
-import jdk.internal.util.xml.impl.Input;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;

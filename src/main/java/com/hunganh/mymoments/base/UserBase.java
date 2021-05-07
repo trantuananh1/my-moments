@@ -6,7 +6,6 @@ import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
 import com.hunganh.mymoments.repository.UserRepository;
-import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

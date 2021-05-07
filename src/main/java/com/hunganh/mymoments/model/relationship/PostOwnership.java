@@ -2,7 +2,6 @@ package com.hunganh.mymoments.model.relationship;
 
 import com.hunganh.mymoments.base.SnwRelationship;
 import com.hunganh.mymoments.model.Post;
-import javafx.geometry.Pos;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
