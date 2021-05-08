@@ -7,11 +7,11 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - ./conf:/conf
-      - ./data:/data
-      - ./import:/import
-      - ./logs:/logs
-      - ./plugins:/plugins
+      - ./docker/neo4j/conf:/conf
+      - ./docker/neo4j/data:/data
+      - ./docker/neo4j/import:/import
+      - ./docker/neo4j/logs:/logs
+      - ./docker/neo4j/plugins:/plugins
     environment: 
       # Raise memory limits
       - NEO4J_dbms_memory_pagecache_size=2G
