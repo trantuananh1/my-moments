@@ -13,7 +13,6 @@ import com.hunganh.mymoments.output.AssocBaseOutput;
 import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
 import com.hunganh.mymoments.util.MessagingUtil;
-import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
