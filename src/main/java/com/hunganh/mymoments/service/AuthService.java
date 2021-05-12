@@ -64,7 +64,7 @@ public class AuthService {
                     String.format("email %s doesn't exist", registerRequest.getEmail()));
         }
         //save user
-        User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword(), null, false);
+        User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword());
         userRepository.save(user);
         Profile profile = Profile.builder()
                 .userId(user.getId())
@@ -72,6 +72,7 @@ public class AuthService {
                 .build();
         user.setProfile(profile);
         userRepository.save(user);
+        log.info("registered user {}", registerRequest.getUsername());
         System.out.println(user);
         //send verify email
         VerificationToken verificationToken = generateVerificationToken(user);
