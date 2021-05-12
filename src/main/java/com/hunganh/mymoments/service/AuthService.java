@@ -66,7 +66,7 @@ public class AuthService {
                     String.format("email %s doesn't exist", registerRequest.getEmail()));
         }
         //save user
-        User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword());
+        User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword(), null, false);
         userRepository.save(user);
         Profile profile = Profile.builder()
                 .userId(user.getId())
