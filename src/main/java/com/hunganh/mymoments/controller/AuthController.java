@@ -12,8 +12,11 @@ import com.hunganh.mymoments.response.SnwSuccessResponse;
 import com.hunganh.mymoments.service.AuthService;
 import com.hunganh.mymoments.util.TemplateUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +31,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 @RequestMapping(value = "/api/auth", produces = "application/json")
 public class AuthController {
     private final AuthService authService;
@@ -50,14 +54,17 @@ public class AuthController {
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         try {
             Map<String, Object> result = authService.login(loginRequest);
-            return new ResponseEntity(TemplateUtil.generateJson(result), OK);
+            if (result.size() != 0) {
+                return new ResponseEntity(TemplateUtil.generateJson(result), OK);
+            }
         } catch (UsernameNotFoundException e) {
-            return new ResponseEntity(new SnwErrorResponse(e.getMessage()), PRECONDITION_FAILED);
-        } catch (AuthenticationException e) {
-            return new ResponseEntity(new SnwErrorResponse(e.getMessage()), UNAUTHORIZED);
-        } catch (Exception e) {
-            return new ResponseEntity(new SnwErrorResponse(e.getMessage()), BAD_REQUEST);
+            return new ResponseEntity(PRECONDITION_FAILED);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity(UNAUTHORIZED);
+        } catch (DisabledException e) {
+            return new ResponseEntity(FORBIDDEN);
         }
+        return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_LOGIN), BAD_REQUEST);
     }
 
     @GetMapping("/verify/{token}")
