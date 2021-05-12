@@ -1,7 +1,11 @@
 package com.hunganh.mymoments.base;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.hunganh.mymoments.constant.BaseConstant;
 import com.hunganh.mymoments.constant.InputParam;
 import com.hunganh.mymoments.constant.JsonConstant;
+import com.hunganh.mymoments.dto.SnwScoreRange;
 import com.hunganh.mymoments.exception.GeneralException;
 import com.hunganh.mymoments.exception.PostNotFoundException;
 import com.hunganh.mymoments.exception.UserNotFoundException;
@@ -16,6 +20,7 @@ import com.hunganh.mymoments.model.relationship.PostOwnership;
 import com.hunganh.mymoments.repository.CommentRepository;
 import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
+import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -24,6 +29,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 /**
  * @Author: Tran Tuan Anh
@@ -55,7 +62,7 @@ public class PostBase {
                 if (post.getAttachmentOwnerships() == null) {
                     post.setAttachmentOwnerships(new ArrayList<>());
                 }
-                post.getAttachmentOwnerships().add(new AttachmentOwnership(attachment, currentTime));
+                post.getAttachmentOwnerships().add(BaseConstant.FIRST_INDEX, new AttachmentOwnership(attachment, currentTime));
                 break;
             }
             case HAS_COMMENT: {
@@ -63,7 +70,7 @@ public class PostBase {
                 if (post.getCommentOwnerships() == null) {
                     post.setCommentOwnerships(new ArrayList<>());
                 }
-                post.getCommentOwnerships().add(new CommentOwnership(comment, currentTime));
+                post.getCommentOwnerships().add(BaseConstant.FIRST_INDEX, new CommentOwnership(comment, currentTime));
                 break;
             }
         }
@@ -154,14 +161,14 @@ public class PostBase {
         return result;
     }
 
-    public List<Comment> getComments(Post post){
+    public List<Comment> getComments(Post post) {
         List<Comment> comments = post.getCommentOwnerships().stream()
                 .map(CommentOwnership::getComment)
                 .collect(Collectors.toList());
         return comments;
     }
 
-    public List<Long> getCommentIds(Post post){
+    public List<Long> getCommentIds(Post post) {
         List<Comment> comments = post.getCommentOwnerships().stream()
                 .map(CommentOwnership::getComment)
                 .collect(Collectors.toList());
@@ -169,5 +176,61 @@ public class PostBase {
                 .map(Comment::getId)
                 .collect(Collectors.toList());
         return commentIds;
+    }
+
+    public Map<String, Object> getOutputData(User user, SnwScoreRange snwScoreRange, int limit) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<Long> postIds = new ArrayList<>();
+            List<PostOwnership> subPostOwnerships = new ArrayList<>();
+            long minScore = snwScoreRange.getMinScore();
+            long maxScore = snwScoreRange.getMaxScore();
+            // get and sort from new -> old
+            List<PostOwnership> postOwnerships = user.getPostOwnerships();
+            if (postOwnerships==null || postOwnerships.size()==0){
+                return result;
+            }
+//            if (minScore == 0 && maxScore == 0) {
+//                subPostOwnerships = postOwnerships.subList(0, limit);
+//            } else {
+//                for (int i = 0; i<postOwnerships.size()-1; i++) {
+//                    PostOwnership maxPostOwnership = postOwnerships.get(i);
+//                    if (maxScore < maxPostOwnership.getScore()) {
+//                        continue;
+//                    }
+//                    // maxScore>=postOwnership.getScore : get start from this index
+//                    maxScore = maxPostOwnership.getScore();
+//                    subPostOwnerships.add(maxPostOwnership);
+//                    for (int j = i + 1; j<postOwnerships.size(); j++) {
+//                        PostOwnership minPostOwnership = postOwnerships.get(j);
+//                        if (subPostOwnerships.size() >= limit) {
+//                            break;
+//                        }
+//                        if (minScore <= minPostOwnership.getScore()) {
+//                            subPostOwnerships.add(minPostOwnership);
+//                        }
+//                    }
+//                    break;
+//                }
+//            }
+//            if (subPostOwnerships.size() == 0){
+//                return result;
+//            }
+//            minScore = Iterables.getLast(subPostOwnerships).getScore();
+//            List<Post> posts = subPostOwnerships.stream().map(PostOwnership::getPost).collect(Collectors.toList());
+//            snwScoreRange = new SnwScoreRange(minScore, maxScore);
+//            postIds = posts.stream().map(Post::getId).collect(Collectors.toList());
+//
+//            result.put(InputParam.POSTS, posts);
+//            result.put(InputParam.POST_IDS, postIds);
+//            result.put(InputParam.SNW_SCORE_RANGE, snwScoreRange);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return result;
+    }
+    public List<Long> getScores(List<PostOwnership> posts){
+        List<Long> scores = posts.stream().map(PostOwnership::getScore).collect(Collectors.toList());
+        return scores;
     }
 }

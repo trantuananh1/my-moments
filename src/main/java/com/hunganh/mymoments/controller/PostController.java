@@ -1,13 +1,14 @@
 package com.hunganh.mymoments.controller;
 
+import com.hunganh.mymoments.constant.BaseConstant;
 import com.hunganh.mymoments.constant.InputParam;
 import com.hunganh.mymoments.constant.ResponseConstant;
-import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.response.SnwAddResponse;
 import com.hunganh.mymoments.response.SnwErrorResponse;
 import com.hunganh.mymoments.response.SnwSuccessResponse;
 import com.hunganh.mymoments.service.AuthService;
 import com.hunganh.mymoments.service.PostService;
+import com.hunganh.mymoments.util.TemplateUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 
 /**
  * @Author: Tran Tuan Anh
@@ -61,7 +65,20 @@ public class PostController {
     }
 
     @GetMapping("/{parentId}/posts")
-    public void getPost(@PathVariable long parentId) {
+    public ResponseEntity getPosts(@PathVariable long parentId,
+                                   @RequestParam(defaultValue = BaseConstant.MIN_SCORE_DEFAULT + "") long minScore,
+                                   @RequestParam(defaultValue = BaseConstant.MAX_SCORE_DEFAULT + "") long maxScore,
+                                   @RequestParam(defaultValue = BaseConstant.LIMIT_DEFAULT + "") int limit) {
+        try {
+            Map<String, Object> result = postService.getPosts(parentId, minScore, maxScore, limit);
+            if (result!=null && result.size()!=0){
+                return new ResponseEntity(TemplateUtil.generateJson(result), HttpStatus.OK);
+            }
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_GET), BAD_REQUEST);
     }
 
     @DeleteMapping("/post/{postId}")

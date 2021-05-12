@@ -7,6 +7,8 @@ package com.hunganh.mymoments.constant;
 
 public class InputParam {
     public static final String POST_ID = "postId";
+    public static final String POST_IDS = "postIds";
+    public static final String POSTS = "posts";
     public static final String USER_ID = "userId";
     public static final String TAG_ID = "tagId";
     public static final String HASHTAG_ID = "hashtagId";

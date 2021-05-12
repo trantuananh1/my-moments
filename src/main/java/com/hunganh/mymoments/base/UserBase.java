@@ -1,19 +1,21 @@
 package com.hunganh.mymoments.base;
 
+import com.hunganh.mymoments.constant.BaseConstant;
 import com.hunganh.mymoments.model.Attachment;
 import com.hunganh.mymoments.model.Post;
 import com.hunganh.mymoments.model.User;
 import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.model.relationship.PostOwnership;
+import com.hunganh.mymoments.model.relationship.PostOwnershipComparator;
 import com.hunganh.mymoments.repository.UserRepository;
 import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import sun.reflect.generics.tree.Tree;
 
 import javax.xml.stream.events.Attribute;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @Author: Tran Tuan Anh
@@ -45,7 +47,7 @@ public class UserBase {
                 if (user.getAttachmentOwnerships()==null){
                     user.setAttachmentOwnerships(new ArrayList<>());
                 }
-                user.getAttachmentOwnerships().add(new AttachmentOwnership(attachment, currentTime));
+                user.getAttachmentOwnerships().add(BaseConstant.FIRST_INDEX, new AttachmentOwnership(attachment, currentTime));
                 break;
             }
         }

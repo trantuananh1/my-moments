@@ -3,14 +3,18 @@ package com.hunganh.mymoments.service;
 import com.hunganh.mymoments.constant.ResponseConstant;
 import com.hunganh.mymoments.dto.AuthenticationResponse;
 import com.hunganh.mymoments.dto.LoginRequest;
+import com.hunganh.mymoments.dto.NotificationEmail;
 import com.hunganh.mymoments.dto.RegisterRequest;
 import com.hunganh.mymoments.exception.AuthenticationException;
+import com.hunganh.mymoments.exception.EmailAlreadyExistsException;
 import com.hunganh.mymoments.exception.EmailNotExistsException;
+import com.hunganh.mymoments.exception.UsernameAlreadyExistsException;
 import com.hunganh.mymoments.model.Profile;
 import com.hunganh.mymoments.model.User;
+import com.hunganh.mymoments.model.VerificationToken;
 import com.hunganh.mymoments.repository.UserRepository;
+import com.hunganh.mymoments.repository.VerificationTokenRepository;
 import com.hunganh.mymoments.util.JwtProvider;
-import com.hunganh.mymoments.util.MailUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -20,12 +24,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -34,26 +39,29 @@ import java.util.Map;
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
     private final JwtProvider jwtProvider;
+    private final MailService mailService;
 
     public void signup(RegisterRequest registerRequest) {
         log.info("registering user {}", registerRequest.getUsername());
-        // check exception
-//        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-//            log.warn("username {} already exists.", registerRequest.getUsername());
-//            throw new UsernameAlreadyExistsException(
-//                    String.format("username %s already exists", registerRequest.getUsername()));
-//        }
-//        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-//            log.warn("email {} already exists.", registerRequest.getEmail());
-//            throw new EmailAlreadyExistsException(
-//                    String.format("email %s already exists", registerRequest.getEmail()));
-//        }
-//        if (!MailUtil.isAddressValid(registerRequest.getEmail())) {
-//            log.warn("email {} doesn't exist.", registerRequest.getEmail());
-//            throw new EmailNotExistsException(
-//                    String.format("email %s doesn't exist", registerRequest.getEmail()));
-//        }
+        // check exceptions
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            log.warn("username {} already exists.", registerRequest.getUsername());
+            throw new UsernameAlreadyExistsException(
+                    String.format("username %s already exists", registerRequest.getUsername()));
+        }
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            log.warn("email {} already exists.", registerRequest.getEmail());
+            throw new EmailAlreadyExistsException(
+                    String.format("email %s already exists", registerRequest.getEmail()));
+        }
+        if (!mailService.isAddressValid(registerRequest.getEmail())) {
+            log.warn("email {} doesn't exist.", registerRequest.getEmail());
+            throw new EmailNotExistsException(
+                    String.format("email %s doesn't exist", registerRequest.getEmail()));
+        }
+        //save user
         User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword(), null, true);
         userRepository.save(user);
         Profile profile = Profile.builder()
@@ -63,22 +71,20 @@ public class AuthService {
         user.setProfile(profile);
         userRepository.save(user);
         System.out.println(user);
-
-//
-//        VerificationToken verificationToken = generateVerificationToken(user);
-//        mailService.sendMail(new NotificationEmail("Activate your Account",
-//                profile.getEmail(), "Thank you for signing up to My Moments with username <b>" + user.getUsername() + "</b>, " +
-//                "please click on the below url to activate your account : " +
-//                "http://localhost:8081/api/auth/verify/" + verificationToken.getToken()));
-//        assocBaseRepository.addAssoc(user, SnwAssocType.HAS_VERTIFICATION_TOKEN, verificationToken, "", new Date().getTime());
+        //send verify email
+        VerificationToken verificationToken = generateVerificationToken(user);
+        mailService.sendMail(new NotificationEmail("Activate your Account",
+                user.getEmail(), "Thank you for signing up to My Moments with username <b>" + user.getUsername() + "</b>, " +
+                "please click on the below url to activate your account : " +
+                "http://localhost:8081/api/auth/verify/" + verificationToken.getToken()));
 
     }
 
     public Map<String, Object> login(LoginRequest loginRequest) {
         Map<String, Object> result = new HashMap<>();
         if (!userRepository.existsByUsername(loginRequest.getUsername())) {
-            throw (new EmailNotExistsException(
-                    String.format("email %s doesn't exist", loginRequest.getUsername())));
+            throw (new UsernameNotFoundException(
+                    String.format("username '%s' doesn't exist", loginRequest.getUsername())));
         }
         try {
             Authentication authenticate = authenticationManager.authenticate(
@@ -95,26 +101,26 @@ public class AuthService {
 
 
     public void verifyAccount(String token) {
-//        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
-//        fetchUserAndEnable(verificationToken.orElseThrow(() -> new MyMomentsException("Invalid Token")));
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+        fetchUserAndEnable(verificationToken.orElseThrow(() -> new RuntimeException("Invalid Token")));
     }
 
-//    private void fetchUserAndEnable(VerificationToken verificationToken) {
-//        String username = verificationToken.getVerificationOwnerships().iterator().next().getStartNode().getUsername();
-//        User user = userRepository.findByUsername(username).orElseThrow(() -> new MyMomentsException("User not found with name - " + username));
-//        user.setEnabled(true);
-//        userRepository.save(user);
-//    }
-//
-//    private VerificationToken generateVerificationToken(User user) {
-//        String token = UUID.randomUUID().toString();
-//        VerificationToken verificationToken = new VerificationToken();
-//        verificationToken.setToken(token);
-//
-//        verificationTokenRepository.save(verificationToken);
-//        return verificationToken;
-//    }
-//
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        long userId = verificationToken.getUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Error"));
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    private VerificationToken generateVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setUserId(user.getId());
+        verificationTokenRepository.save(verificationToken);
+        return verificationToken;
+    }
+
     @Transactional(readOnly = true)
     public User getCurrentUser() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.

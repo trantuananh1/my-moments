@@ -1,5 +1,6 @@
 package com.hunganh.mymoments.base;
 
+import com.hunganh.mymoments.constant.BaseConstant;
 import com.hunganh.mymoments.constant.InputParam;
 import com.hunganh.mymoments.constant.JsonConstant;
 import com.hunganh.mymoments.exception.PostNotFoundException;
@@ -49,7 +50,7 @@ public class CommentBase {
                 if (comment.getAttachmentOwnerships() == null) {
                     comment.setAttachmentOwnerships(new ArrayList<>());
                 }
-                comment.getAttachmentOwnerships().add(new AttachmentOwnership(attachment, currentTime));
+                comment.getAttachmentOwnerships().add(BaseConstant.FIRST_INDEX, new AttachmentOwnership(attachment, currentTime));
                 break;
             }
         }

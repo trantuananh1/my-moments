@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class AuthController {
         try {
             Map<String, Object> result = authService.login(loginRequest);
             return new ResponseEntity(TemplateUtil.generateJson(result), OK);
-        } catch (EmailNotExistsException e) {
+        } catch (UsernameNotFoundException e) {
             return new ResponseEntity(new SnwErrorResponse(e.getMessage()), PRECONDITION_FAILED);
         } catch (AuthenticationException e) {
             return new ResponseEntity(new SnwErrorResponse(e.getMessage()), UNAUTHORIZED);
