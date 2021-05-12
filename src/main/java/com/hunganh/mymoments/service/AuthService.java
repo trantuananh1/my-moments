@@ -27,6 +27,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +45,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final MailService mailService;
 
-    public void signup(RegisterRequest registerRequest) {
+    public void signup(RegisterRequest registerRequest) throws UnknownHostException {
         log.info("registering user {}", registerRequest.getUsername());
         // check exceptions
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
@@ -51,11 +53,11 @@ public class AuthService {
             throw new UsernameAlreadyExistsException(
                     String.format("username %s already exists", registerRequest.getUsername()));
         }
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            log.warn("email {} already exists.", registerRequest.getEmail());
-            throw new EmailAlreadyExistsException(
-                    String.format("email %s already exists", registerRequest.getEmail()));
-        }
+//        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+//            log.warn("email {} already exists.", registerRequest.getEmail());
+//            throw new EmailAlreadyExistsException(
+//                    String.format("email %s already exists", registerRequest.getEmail()));
+//        }
         if (!mailService.isAddressValid(registerRequest.getEmail())) {
             log.warn("email {} doesn't exist.", registerRequest.getEmail());
             throw new EmailNotExistsException(
@@ -73,10 +75,11 @@ public class AuthService {
         System.out.println(user);
         //send verify email
         VerificationToken verificationToken = generateVerificationToken(user);
+        String ip = InetAddress.getLocalHost().getHostAddress();
         mailService.sendMail(new NotificationEmail("Activate your Account",
                 user.getEmail(), "Thank you for signing up to My Moments with username <b>" + user.getUsername() + "</b>, " +
                 "please click on the below url to activate your account : " +
-                "http://localhost:8081/api/auth/verify/" + verificationToken.getToken()));
+                "http://" + ip + "/api/auth/verify/" + verificationToken.getToken()));
 
     }
 
@@ -97,7 +100,6 @@ public class AuthService {
         }
         return result;
     }
-
 
 
     public void verifyAccount(String token) {
