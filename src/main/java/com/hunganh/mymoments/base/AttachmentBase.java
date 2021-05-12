@@ -9,7 +9,6 @@ import com.hunganh.mymoments.model.relationship.AttachmentOwnership;
 import com.hunganh.mymoments.repository.AttachmentRepository;
 import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
-import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
