@@ -46,7 +46,7 @@ public class UserBase {
                 if (user.getAttachmentOwnerships()==null){
                     user.setAttachmentOwnerships(new ArrayList<>());
                 }
-                user.getAttachmentOwnerships().add(BaseConstant.FIRST_INDEX, new AttachmentOwnership(attachment, currentTime));
+                user.getAttachmentOwnerships().add(new AttachmentOwnership(attachment, currentTime));
                 break;
             }
         }

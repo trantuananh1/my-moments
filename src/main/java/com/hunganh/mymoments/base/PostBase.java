@@ -20,7 +20,6 @@ import com.hunganh.mymoments.model.relationship.PostOwnership;
 import com.hunganh.mymoments.repository.CommentRepository;
 import com.hunganh.mymoments.repository.PostRepository;
 import com.hunganh.mymoments.repository.UserRepository;
-import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -29,8 +28,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
 
 /**
  * @Author: Tran Tuan Anh
