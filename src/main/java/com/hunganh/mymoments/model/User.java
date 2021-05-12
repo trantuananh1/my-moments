@@ -60,7 +60,12 @@ public class User extends SnwObject {
         this.lastIP = lastIP;
         this.isEnabled = isEnabled;
     }
-
+    public User(String username, String email, String password){
+        super(0L, 1, new Date().getTime(), new Date().getTime());
+        this.username = username;
+        this.email = email;
+        this.saltedPassword = new BCryptPasswordEncoder().encode(password);
+    }
     @Override
     public String toString() {
         return "User{" +
