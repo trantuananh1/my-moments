@@ -80,14 +80,10 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) {
-                new SecurityContextLogoutHandler().logout(request, response, auth);
-            }
-            return new ResponseEntity(new SnwSuccessResponse(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_LOGOUT), HttpStatus.BAD_REQUEST);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
         }
+        return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_LOGOUT), HttpStatus.BAD_REQUEST);
     }
 }
