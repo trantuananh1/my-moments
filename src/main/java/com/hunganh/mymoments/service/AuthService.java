@@ -53,11 +53,11 @@ public class AuthService {
             throw new UsernameAlreadyExistsException(
                     String.format("username %s already exists", registerRequest.getUsername()));
         }
-//        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-//            log.warn("email {} already exists.", registerRequest.getEmail());
-//            throw new EmailAlreadyExistsException(
-//                    String.format("email %s already exists", registerRequest.getEmail()));
-//        }
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            log.warn("email {} already exists.", registerRequest.getEmail());
+            throw new EmailAlreadyExistsException(
+                    String.format("email %s already exists", registerRequest.getEmail()));
+        }
         if (!mailService.isAddressValid(registerRequest.getEmail())) {
             log.warn("email {} doesn't exist.", registerRequest.getEmail());
             throw new EmailNotExistsException(
