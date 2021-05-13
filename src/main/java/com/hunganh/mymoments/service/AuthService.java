@@ -60,11 +60,11 @@ public class AuthService {
             throw new EmailAlreadyExistsException(
                     String.format("email %s already exists", registerRequest.getEmail()));
         }
-        if (!mailService.isAddressValid(registerRequest.getEmail())) {
-            log.warn("email {} doesn't exist.", registerRequest.getEmail());
-            throw new EmailNotExistsException(
-                    String.format("email %s doesn't exist", registerRequest.getEmail()));
-        }
+//        if (!mailService.isAddressValid(registerRequest.getEmail())) {
+//            log.warn("email {} doesn't exist.", registerRequest.getEmail());
+//            throw new EmailNotExistsException(
+//                    String.format("email %s doesn't exist", registerRequest.getEmail()));
+//        }
         //save user
         User user = new User(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPassword(), null, false);
         userRepository.save(user);

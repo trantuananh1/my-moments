@@ -83,6 +83,7 @@ public class AuthController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
+            return new ResponseEntity(new SnwSuccessResponse(), HttpStatus.OK);
         }
         return new ResponseEntity(new SnwErrorResponse(ResponseConstant.CAN_NOT_LOGOUT), HttpStatus.BAD_REQUEST);
     }
