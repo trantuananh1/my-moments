@@ -35,6 +35,13 @@ services:
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
         - rabbitmq_go_net
+  
+  redis:
+    image: 'bitnami/redis:latest'
+    ports:
+      - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
 
 networks:
   rabbitmq_go_net:
